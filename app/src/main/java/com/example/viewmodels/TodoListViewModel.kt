@@ -1,9 +1,6 @@
 package com.example.viewmodels
 
-import android.annotation.SuppressLint
 import android.location.Location
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -45,6 +42,12 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
             location = location.toString()
         )
         update(updateTask)
+    }
+
+    fun completeTask(task: Task) {
+        val temp = !task.isCompleted
+        task.isCompleted = temp
+        update(task)
     }
 
     private fun update(task: Task) {

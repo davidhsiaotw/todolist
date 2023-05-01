@@ -8,20 +8,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.database.task.Task
 import com.example.todolist.databinding.TaskViewBinding
 
-class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
-    ListAdapter<Task, TaskListAdapter.TaskViewHolder>(DiffCallback) {
+class TaskListAdapter(
+    private val onItemClicked: (Task) -> Unit, private val checkedListener: TaskCompleteListener
+) : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(DiffCallback) {
 
     class TaskViewHolder(private var binding: TaskViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(task: Task) {
+        fun bind(checkedListener: TaskCompleteListener, task: Task) {
             binding.apply {
+                setTask(task)
                 title.text = task.title
                 if (task.description.length > 25) {
                     val subDescription = task.description.substring(0, 26) + "..."
                     description.text = subDescription
                 } else
                     description.text = task.description
-                // TODO: other attributes of task
+                checkbox.isChecked = task.isCompleted
+                setCheckedListener(checkedListener)
             }
         }
     }
@@ -36,8 +39,10 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = getItem(position)
-        holder.itemView.setOnClickListener { onItemClicked(task) }
-        holder.bind(task)
+        holder.itemView.setOnClickListener {
+            onItemClicked(task)
+        }
+        holder.bind(checkedListener, task)
     }
 
     companion object {
@@ -51,4 +56,8 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
             }
         }
     }
+}
+
+class TaskCompleteListener(val checkedListener: (task: Task) -> Unit) {
+    fun onCheck(task: Task) = checkedListener(task)
 }

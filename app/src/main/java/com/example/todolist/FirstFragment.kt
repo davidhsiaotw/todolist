@@ -36,11 +36,19 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = TaskListAdapter {
-            Toast.makeText(requireContext(), "Navigate to Editing Layout", Toast.LENGTH_SHORT)
-                .show()
-            // TODO: navigate to editing layout
-        }
+        val adapter = TaskListAdapter(
+            {
+                Toast.makeText(requireContext(), "Navigate to Editing Layout", Toast.LENGTH_SHORT)
+                    .show()
+                // TODO: navigate to editing layout
+            }, TaskCompleteListener {
+                viewModel.completeTask(it)
+//                val toastText = if (it.isCompleted) "${it.title} is completed!"
+//                else "${it.title} is not completed!"
+//                Toast.makeText(requireContext(), "${it.id}: $toastText", Toast.LENGTH_SHORT)
+//                    .show()
+            }
+        )
         binding.todoList.adapter = adapter
 
         viewModel.allTasks.observe(this.viewLifecycleOwner) { tasks ->
