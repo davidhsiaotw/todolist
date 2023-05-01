@@ -27,7 +27,11 @@ class TaskListAdapter(private val onItemClicked: (Task) -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
-        return TaskViewHolder(TaskViewBinding.inflate(LayoutInflater.from(parent.context)))
+        return TaskViewHolder(
+            TaskViewBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
