@@ -21,14 +21,14 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                val instance =
-                    Room.databaseBuilder(
-                        context.applicationContext,
-                        AppDatabase::class.java,
-                        "app_database"
-                    )
-//                        .fallbackToDestructiveMigration()
-                        .createFromAsset("database/todo_list.db").build()
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDatabase::class.java,
+                    "app_database"
+                )
+                    .fallbackToDestructiveMigration()
+//                  .createFromAsset("database/todo_list.db")
+                    .build()
                 INSTANCE = instance
 
                 return instance
