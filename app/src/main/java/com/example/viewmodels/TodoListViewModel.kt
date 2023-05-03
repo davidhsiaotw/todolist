@@ -1,27 +1,25 @@
 package com.example.viewmodels
 
 import android.location.Location
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.database.task.Task
 import com.example.database.task.TaskDao
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
     val allTasks: LiveData<List<Task>> = taskDao.getAll().asLiveData()
 
+    private var _selectedId = MutableLiveData<Int?>()
+    var selectedId: LiveData<Int?> = _selectedId
+
     fun addNewTask(
-        title: String, description: String, createDate: LocalDateTime, dueDate: LocalDateTime,
-        location: Location
+        title: String, description: String, createDate: String, dueDate: String, location: Location
     ) {
         val newTask = Task(
-            title = title, description = description,
-            createDate = createDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-            dueDate = dueDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+            title = title,
+            description = description,
+            createDate = createDate,
+            dueDate = dueDate,
             location = location.toString()
         )
         insert(newTask)
@@ -32,13 +30,19 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
     }
 
     fun updateTask(
-        id: Int, title: String, description: String, createDate: LocalDateTime,
-        dueDate: LocalDateTime, location: Location
+        id: Int,
+        title: String,
+        description: String,
+        createDate: String,
+        dueDate: String,
+        location: Location
     ) {
         val updateTask = Task(
-            id, title = title, description = description,
-            createDate = createDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-            dueDate = dueDate.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+            id,
+            title = title,
+            description = description,
+            createDate = createDate,
+            dueDate = dueDate,
             location = location.toString()
         )
         update(updateTask)
@@ -54,8 +58,16 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
         viewModelScope.launch { taskDao.update(task) }
     }
 
-    private fun delete(task: Task) {
+    fun delete(task: Task) {
         viewModelScope.launch { taskDao.delete(task) }
+    }
+
+    fun getTaskById(id: Int): LiveData<Task> {
+        return taskDao.getTask(id).asLiveData()
+    }
+
+    fun setSelectedId(id: Int?) {
+        _selectedId.value = id
     }
 
 }

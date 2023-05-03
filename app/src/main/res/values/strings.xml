@@ -7,11 +7,17 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="scrollview_description">Insert new task</string>
     <string name="task_description">Description</string>
     <string name="task_title">Title</string>
+    <string name="task_title_req">Title <font color='#FF0000'>*</font></string>
+    <string name="task_description_req">Description (max 150
+    characters)</string>
     <string name="add_content_description">Add</string>
-    <string name="date">Jan 1 1900</string>
+    <string name="date">1900/01/01</string>
+    <string name="create_date">Create Date</string>
+    <string name="due_date">Due Date</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="location">Location</string>
 </resources>
