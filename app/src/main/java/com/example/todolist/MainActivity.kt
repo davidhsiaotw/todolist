@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.Manifest
 import android.app.Activity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,17 +13,16 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
-    lateinit var thisView: View
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        thisView = window.decorView
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -95,11 +93,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 startIntent()
             } else {
-                val snackBar = Snackbar.make(thisView, "無定位功能無法執行程序", Snackbar.LENGTH_INDEFINITE)
+                val snackBar = Snackbar.make(
+                    findViewById(android.R.id.content), "無定位功能無法執行程序", Snackbar.LENGTH_INDEFINITE
+                )
                 snackBar.setAction("OK") {
-                    snackBar.setText("aaaaaaaa")
-//                    snackBar.dismiss()
-                }.setActionTextColor(Color.LTGRAY).show()
+                    it.setOnClickListener {
+                        snackBar.dismiss()
+                    }
+                }.setActionTextColor(Color.YELLOW)
+                snackBar.show()
+
+                // show dialog to remind the user open location access permission
+                MaterialAlertDialogBuilder(this).setMessage(
+                    "Please go to Settings>Location, and allow Todo List app access you location"
+                ).show()
             }
         }
     }
