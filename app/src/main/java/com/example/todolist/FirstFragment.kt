@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolist.databinding.FragmentFirstBinding
 import com.example.viewmodels.TodoListViewModel
@@ -44,6 +46,10 @@ class FirstFragment : Fragment() {
 //                else "${it.title} is not completed!"
 //                Toast.makeText(requireContext(), "${it.id}: $toastText", Toast.LENGTH_SHORT)
 //                    .show()
+            }, {
+                Toast.makeText(requireContext(), "delete \"${it.title}\"", Toast.LENGTH_SHORT)
+                    .show()
+                viewModel.delete(it)
             }
         )
         binding.todoList.adapter = adapter
@@ -58,6 +64,18 @@ class FirstFragment : Fragment() {
         binding.todoList.addItemDecoration(
             DividerItemDecoration(this.context, 1)
         )
+
+        val taskTouchHelper = ItemTouchHelper(TaskTouchSimpleCallBack {
+            // show confirm dialog
+            AlertDialog.Builder(requireContext()).setMessage(
+                "You are about to permanently delete the task"
+            ).setPositiveButton("Confirm") { _, _ ->
+                adapter.deleteTask(it)
+            }.setNegativeButton("Cancel") { _, _ ->
+                adapter.notifyItemChanged(it)
+            }.create().show()
+        })
+        taskTouchHelper.attachToRecyclerView(binding.todoList)
     }
 
     override fun onDestroyView() {

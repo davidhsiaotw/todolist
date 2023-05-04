@@ -9,7 +9,8 @@ import com.example.database.task.Task
 import com.example.todolist.databinding.TaskViewBinding
 
 class TaskListAdapter(
-    private val onItemClicked: (Task) -> Unit, private val checkedListener: TaskCompleteListener
+    private val onItemClicked: (Task) -> Unit, private val checkedListener: TaskCompleteListener,
+    private val onItemSwiped: (Task) -> Unit
 ) : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(DiffCallback) {
 
     class TaskViewHolder(private var binding: TaskViewBinding) :
@@ -61,6 +62,11 @@ class TaskListAdapter(
             onItemClicked(task)
         }
         holder.bind(checkedListener, task)
+    }
+
+    fun deleteTask(position: Int) {
+        val task = getItem(position)
+        onItemSwiped(task)
     }
 
     companion object {

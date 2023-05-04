@@ -10,4 +10,5 @@
     <color name="dark_secondary_variant">#e4b5ff</color>
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="item_delete">#E33300</color>
 </resources>

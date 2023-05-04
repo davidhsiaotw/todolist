@@ -66,7 +66,7 @@ class SecondFragment : DialogFragment() {
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .setTitleText("Select Due Date").build()
                 datePicker.addOnPositiveButtonClickListener {
-                    val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(it))
+                    val date = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date(it))
                     dueDateText.setText(date)
                 }
                 datePicker.show(parentFragmentManager, "DueDatePicker")
