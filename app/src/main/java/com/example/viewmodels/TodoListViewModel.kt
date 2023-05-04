@@ -1,6 +1,5 @@
 package com.example.viewmodels
 
-import android.location.Location
 import androidx.lifecycle.*
 import com.example.database.task.Task
 import com.example.database.task.TaskDao
@@ -13,14 +12,11 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
     var selectedId: LiveData<Int?> = _selectedId
 
     fun addNewTask(
-        title: String, description: String, createDate: String, dueDate: String, location: Location
+        title: String, description: String, createDate: String, dueDate: String, location: String
     ) {
         val newTask = Task(
-            title = title,
-            description = description,
-            createDate = createDate,
-            dueDate = dueDate,
-            location = location.toString()
+            title = title, description = description, createDate = createDate, dueDate = dueDate,
+            location = location
         )
         insert(newTask)
     }
@@ -30,20 +26,12 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
     }
 
     fun updateTask(
-        id: Int,
-        title: String,
-        description: String,
-        createDate: String,
-        dueDate: String,
-        location: Location
+        id: Int, title: String, description: String, createDate: String, dueDate: String,
+        location: String
     ) {
         val updateTask = Task(
-            id,
-            title = title,
-            description = description,
-            createDate = createDate,
-            dueDate = dueDate,
-            location = location.toString()
+            id, title = title, description = description, createDate = createDate,
+            dueDate = dueDate, location = location
         )
         update(updateTask)
     }

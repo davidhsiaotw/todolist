@@ -36,8 +36,7 @@ class SecondFragment : DialogFragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
@@ -84,8 +83,8 @@ class SecondFragment : DialogFragment() {
         }
 
         val selectedId = viewModel.selectedId.value
-        if (viewModel.selectedId.value != null)
-            viewModel.getTaskById(selectedId!!).observe(this.viewLifecycleOwner) {
+        if (viewModel.selectedId.value != null) viewModel.getTaskById(selectedId!!)
+            .observe(this.viewLifecycleOwner) {
                 task = it
                 binding.apply {
                     titleInput.setText(task.title, TextView.BufferType.SPANNABLE)
@@ -116,17 +115,32 @@ class SecondFragment : DialogFragment() {
 
     private fun saveTask() {
         if (viewModel.selectedId.value != null) {
+            binding.apply {
+                viewModel.updateTask(
+                    viewModel.selectedId.value!!, titleInput.text.toString(),
+                    descriptionInput.text.toString(), createDateInput.text.toString(),
+                    dueDateInput.text.toString(), locationInput.text.toString()
+                )
+            }
+
             Toast.makeText(
-                requireContext(), "successfully update ${binding.titleInput.text}",
+                requireContext(),
+                "successfully update ${binding.titleInput.text}",
                 Toast.LENGTH_SHORT
             ).show()
-            // TODO: update
         } else {
+            binding.apply {
+                viewModel.addNewTask(
+                    titleInput.text.toString(), descriptionInput.text.toString(),
+                    createDateInput.text.toString(), dueDateInput.text.toString(),
+                    locationInput.text.toString()
+                )
+            }
+
             Toast.makeText(
                 requireContext(), "successfully add new task: ${binding.titleInput.text}",
                 Toast.LENGTH_SHORT
             ).show()
-            // TODO: add
         }
     }
 }

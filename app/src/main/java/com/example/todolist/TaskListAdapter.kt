@@ -17,12 +17,27 @@ class TaskListAdapter(
         fun bind(checkedListener: TaskCompleteListener, task: Task) {
             binding.apply {
                 setTask(task)
-                title.text = task.title
-                if (task.description.length > 25) {
-                    val subDescription = task.description.substring(0, 26) + "..."
-                    description.text = subDescription
+
+                if (task.title.length > 20) {
+                    val subtitle = "${task.title.substring(0, 21)} ..."
+                    title.text = subtitle
                 } else
-                    description.text = task.description
+                    title.text = task.title
+
+                val descriptionLine = task.description.split('\n')
+                val firstLine = descriptionLine[0]
+                if (firstLine.length > 20) {
+                    val subDescription = "${firstLine.substring(0, 21)} ..."
+                    description.text = subDescription
+
+                } else if (descriptionLine.size > 1) {
+                    val subDescription = "$firstLine ..."
+                    description.text = subDescription
+
+                } else {
+                    description.text = firstLine
+                }
+
                 textView.text =
                     root.context.getString(R.string.date).format(task.createDate, task.dueDate)
                 location.text = task.location

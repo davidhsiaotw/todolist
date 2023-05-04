@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.Manifest
 import android.app.Activity
-import android.location.Location
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -25,6 +24,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        thisView = window.decorView
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 val snackBar = Snackbar.make(thisView, "無定位功能無法執行程序", Snackbar.LENGTH_INDEFINITE)
                 snackBar.setAction("OK") {
                     snackBar.setText("aaaaaaaa")
-                    //                        snackBar.dismiss()
+//                    snackBar.dismiss()
                 }.setActionTextColor(Color.LTGRAY).show()
             }
         }
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    fun startIntent() {
+    private fun startIntent() {
         val intent = Intent(this, MapsActivity::class.java)
         resultLauncher.launch(intent)
     }
