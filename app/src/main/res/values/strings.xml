@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Todo List</string>
     <string name="action_settings">Settings</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">@string/API_KEY</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -14,7 +15,8 @@
     <string name="task_description_req">Description (max 150
     characters)</string>
     <string name="add_content_description">Add</string>
-    <string name="date">1900/01/01</string>
+    <string name="date">%s~%s</string>
+    <string name="date_example">1900/01/01</string>
     <string name="create_date">Create Date</string>
     <string name="due_date">Due Date</string>
     <string name="save">Save</string>

@@ -1,13 +1,25 @@
 package com.example.todolist
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import android.Manifest
+import android.app.Activity
+import android.location.Location
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+    lateinit var thisView: View
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,5 +68,54 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         // To make it fullscreen, use the 'content' root view as the container
         // for the fragment, which is always the root view for the activity
         transaction.add(android.R.id.content, newFragment).addToBackStack(null).commit()
+    }
+
+
+    fun permission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 0
+            )
+        } else startIntent()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 0) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startIntent()
+            } else {
+                val snackBar = Snackbar.make(thisView, "無定位功能無法執行程序", Snackbar.LENGTH_INDEFINITE)
+                snackBar.setAction("OK") {
+                    snackBar.setText("aaaaaaaa")
+                    //                        snackBar.dismiss()
+                }.setActionTextColor(Color.LTGRAY).show()
+            }
+        }
+    }
+
+    private var location: String? = null
+    var resultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        // XXX: issue: cannot get location from MapsActivity
+        if (it.resultCode == 200) {
+            location = it.data?.getStringExtra("location")
+        }
+    }
+
+    fun startIntent() {
+        val intent = Intent(this, MapsActivity::class.java)
+        resultLauncher.launch(intent)
     }
 }

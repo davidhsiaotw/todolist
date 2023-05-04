@@ -23,6 +23,9 @@ class TaskListAdapter(
                     description.text = subDescription
                 } else
                     description.text = task.description
+                textView.text =
+                    root.context.getString(R.string.date).format(task.createDate, task.dueDate)
+                location.text = task.location
                 checkbox.isChecked = task.isCompleted
                 setCheckedListener(checkedListener)
             }

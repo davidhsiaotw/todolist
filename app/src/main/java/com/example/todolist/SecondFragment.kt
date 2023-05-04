@@ -1,7 +1,6 @@
 package com.example.todolist
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * A simple [Fragment] subclass as the second destination in the navigation.
+ * A simple [DialogFragment] subclass as a task edit UI.
  */
 class SecondFragment : DialogFragment() {
     private val viewModel: TodoListViewModel by activityViewModels {
@@ -29,6 +28,8 @@ class SecondFragment : DialogFragment() {
     private lateinit var task: Task
     private lateinit var createDateText: TextInputEditText
     private lateinit var dueDateText: TextInputEditText
+    private lateinit var locationText: TextInputEditText
+
     private var _binding: FragmentSecondBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
@@ -70,6 +71,15 @@ class SecondFragment : DialogFragment() {
                     dueDateText.setText(date)
                 }
                 datePicker.show(parentFragmentManager, "DueDatePicker")
+            }
+        }
+
+        locationText = view.findViewById(R.id.location_input)
+        locationText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                (activity as MainActivity).permission()
+                // TODO: show google map -> get latitude and gratitude -> set Task.location
+
             }
         }
 

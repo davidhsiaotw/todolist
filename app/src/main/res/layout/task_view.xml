@@ -56,9 +56,7 @@
                 android:id="@+id/ic_calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
                 android:src="@drawable/round_calendar_month_24"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/checkbox"
                 app:layout_constraintTop_toBottomOf="@id/description"
                 tools:ignore="ContentDescription,ImageContrastCheck" />
@@ -67,10 +65,29 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                app:layout_constraintBottom_toBottomOf="@+id/ic_calendar"
                 app:layout_constraintStart_toEndOf="@+id/ic_calendar"
-                app:layout_constraintTop_toBottomOf="@id/description"
-                tools:text="@string/date" />
+                app:layout_constraintTop_toTopOf="@+id/ic_calendar"
+                tools:text="@string/date_example" />
+
+            <ImageView
+                android:id="@+id/ic_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/round_my_location_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/checkbox"
+                app:layout_constraintTop_toBottomOf="@id/ic_calendar" />
+
+            <TextView
+                android:id="@+id/location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/ic_location"
+                app:layout_constraintStart_toEndOf="@+id/ic_location"
+                app:layout_constraintTop_toTopOf="@+id/ic_location"
+                tools:text="25.0330° N, 121.5654° E" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
