@@ -20,10 +20,6 @@ class TodoListViewModel(private val taskDao: TaskDao) : ViewModel() {
     private val _quote = MutableLiveData<String>()
     val quote: LiveData<String> = _quote
 
-    init {
-        getQuote(10, 50)
-    }
-
     fun addNewTask(
         title: String, description: String, createDate: String, dueDate: String, location: String
     ) {
