@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.Manifest
-import android.app.Activity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -13,9 +12,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.network.QuoteApi
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private lateinit var navController: NavController
@@ -30,6 +34,41 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         val float = findViewById<FloatingActionButton>(R.id.add_task)
         float.setOnClickListener {
             showDialog()
+        }
+        findViewById<BottomAppBar>(R.id.bottomAppBar).setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_quote -> {
+                    // TODO: show daily quote
+                    val call = QuoteApi.retrofitService.getQuote(50, 10)
+                    call.enqueue(object : Callback<List<Map<String, Any>>> {
+                        override fun onResponse(
+                            call: Call<List<Map<String, Any>>>,
+                            response: Response<List<Map<String, Any>>>
+                        ) {
+                            val body = response.body()?.get(0)?.get("content")
+                            if (body != null) {
+                                MaterialAlertDialogBuilder(this@MainActivity)
+                                    .setTitle("Daily Quote")
+                                    .setMessage(body as String)
+                                    .setPositiveButton("REGENERATE") { dialog, _ ->
+                                        // TODO: call api again -> close current dialog -> open
+                                        //  new dialog
+                                        dialog.dismiss()
+                                    }.show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<List<Map<String, Any>>>, t: Throwable) {
+                            MaterialAlertDialogBuilder(this@MainActivity)
+                                .setMessage(t.stackTraceToString()).show()
+                        }
+
+                    })
+
+                    true
+                }
+                else -> false
+            }
         }
     }
 

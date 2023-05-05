@@ -28,7 +28,8 @@
         style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu_main" />
     <!--        app:navigationIcon="@drawable/round_menu_24" />-->
 
 

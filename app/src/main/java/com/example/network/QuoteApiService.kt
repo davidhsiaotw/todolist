@@ -2,6 +2,7 @@ package com.example.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
@@ -15,9 +16,9 @@ private val retrofit = Retrofit.Builder().addConverterFactory(
 
 interface QuoteApiService {
     @GET("quotes/random")
-    suspend fun getQuote(
+    fun getQuote(
         @Query("maxLength") maxLength: Int, @Query("minLength") minLength: Int
-    ): List<Map<String, Any>>
+    ): Call<List<Map<String, Any>>>
 }
 
 object QuoteApi {

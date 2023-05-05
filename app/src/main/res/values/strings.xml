@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Todo List</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_quote">Quote</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">@string/API_KEY</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

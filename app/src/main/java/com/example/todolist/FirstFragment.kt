@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolist.databinding.FragmentFirstBinding
 import com.example.viewmodels.TodoListViewModel
 import com.example.viewmodels.TodoListViewModelFactory
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -37,15 +36,6 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getQuote(10, 50)
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Daily Quote")
-            .setMessage(viewModel.quote.value)
-            .setPositiveButton("REGENERATE") { dialog, _ ->
-                viewModel.getQuote(10, 50)
-                (dialog as AlertDialog).setMessage(viewModel.quote.value)
-            }.show()
-
         val adapter = TaskListAdapter(
             {
                 viewModel.setSelectedId(it.id)
@@ -69,6 +59,15 @@ class FirstFragment : Fragment() {
                 adapter.submitList(it)
             }
         }
+
+//        viewModel.getQuote(10, 50)
+//        MaterialAlertDialogBuilder(requireContext())
+//            .setTitle("Daily Quote")
+//            .setMessage(viewModel.quote.value)
+//            .setPositiveButton("REGENERATE") { dialog, _ ->
+//                viewModel.getQuote(10, 50)
+//                (dialog as AlertDialog).setMessage(viewModel.quote.value)
+//            }.show()
 
         binding.todoList.layoutManager = LinearLayoutManager(this.context)
         binding.todoList.addItemDecoration(
