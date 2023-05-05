@@ -46,6 +46,8 @@ class SecondFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         createDateText = view.findViewById(R.id.create_date_input)
+        val today = Date()
+        createDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(today))
         createDateText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 val datePicker = MaterialDatePicker.Builder.datePicker()
@@ -60,6 +62,11 @@ class SecondFragment : DialogFragment() {
         }
 
         dueDateText = view.findViewById(R.id.due_date_input)
+        val c = Calendar.getInstance()
+        c.time = today
+        c.add(Calendar.DATE, 1)
+        val tomorrow = c.time
+        dueDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(tomorrow))
         dueDateText.setOnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 val datePicker = MaterialDatePicker.Builder.datePicker()
