@@ -30,7 +30,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <!--        https://github.com/Aria-Lee/30Day_Challenge/blob/master/DAY07_MyLocation(GoogleMap)/app/src/main/AndroidManifest.xml-->
-        <activity android:name=".MapsActivity"/>
+<!--        <activity android:name=".MapsActivity"/>-->
     </application>
 
 </manifest>

@@ -2,17 +2,21 @@ package com.example.todolist
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.os.Bundle
 import android.Manifest
+import android.location.LocationManager
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.network.QuoteApi
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -22,6 +26,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+    //    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +75,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 else -> false
             }
         }
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -107,59 +113,88 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         transaction.add(android.R.id.content, newFragment).addToBackStack(null).commit()
     }
 
+    // reference: https://www.youtube.com/watch?v=mwzKYIB9cQs&ab_channel=TechProjects
+//    fun getCurrentLocation(): String {
+//        if (checkPermissions()) {
+//            return if (isLocationEnabled()) {
+//                if (ActivityCompat.checkSelfPermission(
+//                        this, Manifest.permission.ACCESS_FINE_LOCATION
+//                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                        this, Manifest.permission.ACCESS_COARSE_LOCATION
+//                    ) != PackageManager.PERMISSION_GRANTED
+//                ) {
+//                    requestPermission()
+//                    return ""
+//                }
+//
+//                val currentLocation =
+//                    fusedLocationProviderClient.lastLocation.addOnCompleteListener {
+//                        val location = it.result
+//                        if (location == null)
+//                            Toast.makeText(this, "NULL location", Toast.LENGTH_SHORT).show()
+//                    }.result
+//
+//                "${currentLocation.latitude}, ${currentLocation.longitude}"
+//            } else {
+//                // open Settings for user
+//                Toast.makeText(this, "Please turn on GPS", Toast.LENGTH_SHORT).show()
+//                startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+//                ""
+//            }
+//        } else {
+//            requestPermission()
+//            return ""
+//        }
+//    }
+//
+//    private fun checkPermissions(): Boolean {
+//        return (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED &&
+//                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED)
+//    }
+//
+//    private fun isLocationEnabled(): Boolean {
+//        val locationManager: LocationManager =
+//            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager
+//            .isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+//    }
+//
+//    private fun requestPermission() {
+//        ActivityCompat.requestPermissions(
+//            this, arrayOf(
+//                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+//            ), 0
+//        )
+//    }
+//
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        if (requestCode == 0) {
+//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+//                getCurrentLocation()
+//            } else {
+//                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
-    fun permission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), 0
-            )
-        } else startIntent()
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 0) {
-
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startIntent()
-            } else {
-                val snackBar = Snackbar.make(
-                    findViewById(android.R.id.content), "無定位功能無法執行程序", Snackbar.LENGTH_INDEFINITE
-                )
-                snackBar.setAction("OK") {
-                    it.setOnClickListener {
-                        snackBar.dismiss()
-                    }
-                }.setActionTextColor(Color.YELLOW)
-                snackBar.show()
-
-                // show dialog to remind the user open location access permission
-                MaterialAlertDialogBuilder(this).setMessage(
-                    "Please go to Settings>Location, and allow Todo List app access you location"
-                ).show()
-            }
-        }
-    }
-
-    private var location: String? = null
-    var resultLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        // XXX: issue: cannot get location from MapsActivity
-        if (it.resultCode == 200) {
-            location = it.data?.getStringExtra("location")
-        }
-    }
-
-    private fun startIntent() {
-        val intent = Intent(this, MapsActivity::class.java)
-        resultLauncher.launch(intent)
-    }
+//    var location: String? = null
+//    var resultLauncher = registerForActivityResult(
+//        ActivityResultContracts.StartActivityForResult()
+//    ) {
+//        // XXX: issue: cannot get location from MapsActivity
+//        if (it.resultCode == 200) {
+//            location = it.data?.getStringExtra("location")
+//        }
+//    }
+//
+//    private fun startIntent() {
+//        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//        startActivity(intent)
+//    }
 }

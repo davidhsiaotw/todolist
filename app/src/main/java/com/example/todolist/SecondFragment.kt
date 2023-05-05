@@ -6,22 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import android.Manifest
+import android.annotation.SuppressLint
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.database.task.Task
 import com.example.todolist.databinding.FragmentSecondBinding
 import com.example.viewmodels.TodoListViewModel
 import com.example.viewmodels.TodoListViewModelFactory
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.vmadalin.easypermissions.EasyPermissions
+import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
  * A simple [DialogFragment] subclass as a task edit UI.
+ * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San"></a>
  */
-class SecondFragment : DialogFragment() {
+class SecondFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
     private val viewModel: TodoListViewModel by activityViewModels {
         TodoListViewModelFactory((activity?.application as TodoListApplication).database.taskDao())
     }
@@ -29,11 +36,18 @@ class SecondFragment : DialogFragment() {
     private lateinit var createDateText: TextInputEditText
     private lateinit var dueDateText: TextInputEditText
     private lateinit var locationText: TextInputEditText
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private var _binding: FragmentSecondBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireContext())
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -42,6 +56,7 @@ class SecondFragment : DialogFragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,27 +95,61 @@ class SecondFragment : DialogFragment() {
             }
         }
 
-        locationText = view.findViewById(R.id.location_input)
-        locationText.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                (activity as MainActivity).permission()
-                // TODO: show google map -> get latitude and gratitude -> set Task.location
-
-            }
-        }
-
         val selectedId = viewModel.selectedId.value
-        if (viewModel.selectedId.value != null) viewModel.getTaskById(selectedId!!)
-            .observe(this.viewLifecycleOwner) {
+        locationText = view.findViewById(R.id.location_input)
+        if (viewModel.selectedId.value != null)
+            viewModel.getTaskById(selectedId!!).observe(this.viewLifecycleOwner) {
                 task = it
                 binding.apply {
                     titleInput.setText(task.title, TextView.BufferType.SPANNABLE)
                     descriptionInput.setText(task.description, TextView.BufferType.SPANNABLE)
                     createDateInput.setText(task.createDate, TextView.BufferType.SPANNABLE)
                     dueDateInput.setText(task.dueDate, TextView.BufferType.SPANNABLE)
-                    locationInput.setText(task.location, TextView.BufferType.SPANNABLE)
+                    if (task.location.isBlank()) {
+                        if (hasLocationPermission()) {
+                            fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                                val location = task.result
+                                if (location != null) {
+                                    val ll = "${location.latitude}, ${location.longitude}"
+                                    locationInput.setText(
+                                        ll, TextView.BufferType.SPANNABLE
+                                    )
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(), "NULL location", Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        }
+
+                        locationInput.setText("")
+                    } else {
+                        locationInput.setText(task.location, TextView.BufferType.SPANNABLE)
+                    }
                 }
             }
+        else {
+            // set default location for new task
+            if (hasLocationPermission()) {
+                fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
+                    val location = task.result
+                    if (location != null) {
+                        val ll = "${location.latitude}, ${location.longitude}"
+                        locationText.setText(
+                            ll, TextView.BufferType.SPANNABLE
+                        )
+                    } else {
+                        Toast.makeText(
+                            requireContext(), "NULL location", Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+        locationText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus)
+                requestLocationPermission()
+        }
 
         view.findViewById<MaterialButton>(R.id.save_button).setOnClickListener {
             if (binding.titleInput.text!!.isNotBlank()) {
@@ -150,4 +199,37 @@ class SecondFragment : DialogFragment() {
             ).show()
         }
     }
+
+    private fun hasLocationPermission() = EasyPermissions.hasPermissions(
+        requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+    ) || EasyPermissions.hasPermissions(
+        requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            SettingsDialog.Builder(requireActivity()).build().show()
+        } else {
+            requestLocationPermission()
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        Toast.makeText(requireContext(), "Permission Granted", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun requestLocationPermission() {
+        EasyPermissions.requestPermissions(
+            this, "This application cannot work normally without Location Permission.",
+            0, Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
+
+
 }
