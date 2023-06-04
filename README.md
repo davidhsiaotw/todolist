@@ -9,5 +9,5 @@ Users can check the task to mark it as completed and swipe left to delete the ta
 <img src="https://github.com/davidhsiaotw/todolist/blob/master/app/src/main/res/drawable/Screenshot.png"  width="38%">
 
 # Issues
-Descriptions will be out of screen in some languages like Chinese
+Descriptions will be out of screen in some languages like Chinese</br>
 Start date can be larger than due date
