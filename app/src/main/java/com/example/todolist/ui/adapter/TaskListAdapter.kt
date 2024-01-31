@@ -1,11 +1,12 @@
-package com.example.todolist
+package com.example.todolist.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.database.task.Task
+import com.example.todolist.R
+import com.example.todolist.model.Task
 import com.example.todolist.databinding.TaskViewBinding
 
 class TaskListAdapter(

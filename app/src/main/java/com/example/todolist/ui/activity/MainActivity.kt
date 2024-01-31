@@ -1,26 +1,16 @@
-package com.example.todolist
+package com.example.todolist.ui.activity
 
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.Manifest
-import android.location.LocationManager
-import android.provider.Settings
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.network.QuoteApi
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.example.todolist.R
+import com.example.todolist.network.QuoteApi
+import com.example.todolist.ui.fragment.TaskEditDialogFragment
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -103,7 +93,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
      */
     fun showDialog() {
         val fragmentManager = supportFragmentManager
-        val newFragment = SecondFragment()
+        val newFragment = TaskEditDialogFragment()
 
         val transaction = fragmentManager.beginTransaction()
         // For a little polish, specify a transition animation

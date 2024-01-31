@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#80000000"
     android:id="@+id/secondFragment"
-    tools:context=".SecondFragment">
+    tools:context=".ui.fragment.TaskEditDialogFragment">
 
     <ScrollView
         android:id="@+id/instruction_scrollview"

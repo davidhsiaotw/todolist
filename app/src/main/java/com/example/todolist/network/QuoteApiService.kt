@@ -1,4 +1,4 @@
-package com.example.network
+package com.example.todolist.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

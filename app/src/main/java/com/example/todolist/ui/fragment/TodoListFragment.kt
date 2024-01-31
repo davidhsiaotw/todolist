@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.ui.fragment
 
 import android.os.Bundle
 import android.view.*
@@ -9,17 +9,18 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.todolist.ui.activity.MainActivity
+import com.example.todolist.ui.adapter.TaskCompleteListener
+import com.example.todolist.ui.adapter.TaskListAdapter
 import com.example.todolist.databinding.FragmentFirstBinding
-import com.example.viewmodels.TodoListViewModel
-import com.example.viewmodels.TodoListViewModelFactory
+import com.example.todolist.util.TaskTouchSimpleCallBack
+import com.example.todolist.viewmodels.TodoListViewModel
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
-    private val viewModel: TodoListViewModel by activityViewModels {
-        TodoListViewModelFactory((activity?.application as TodoListApplication).database.taskDao())
-    }
+class TodoListFragment : Fragment() {
+    private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
     private var _binding: FragmentFirstBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.

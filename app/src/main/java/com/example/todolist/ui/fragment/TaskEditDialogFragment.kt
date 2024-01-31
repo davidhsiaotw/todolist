@@ -1,4 +1,4 @@
-package com.example.todolist
+package com.example.todolist.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,10 +10,10 @@ import android.Manifest
 import android.annotation.SuppressLint
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import com.example.database.task.Task
+import com.example.todolist.R
+import com.example.todolist.model.Task
 import com.example.todolist.databinding.FragmentSecondBinding
-import com.example.viewmodels.TodoListViewModel
-import com.example.viewmodels.TodoListViewModelFactory
+import com.example.todolist.viewmodels.TodoListViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.button.MaterialButton
@@ -28,10 +28,8 @@ import java.util.*
  * A simple [DialogFragment] subclass as a task edit UI.
  * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San"></a>
  */
-class SecondFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
-    private val viewModel: TodoListViewModel by activityViewModels {
-        TodoListViewModelFactory((activity?.application as TodoListApplication).database.taskDao())
-    }
+class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
+    private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
     private lateinit var task: Task
     private lateinit var createDateText: TextInputEditText
     private lateinit var dueDateText: TextInputEditText

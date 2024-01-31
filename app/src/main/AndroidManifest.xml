@@ -17,7 +17,7 @@
         android:theme="@style/Theme.TodoList"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.TodoList.NoActionBar">
             <intent-filter>
@@ -26,11 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <!--        https://github.com/Aria-Lee/30Day_Challenge/blob/master/DAY07_MyLocation(GoogleMap)/app/src/main/AndroidManifest.xml-->
-<!--        <activity android:name=".MapsActivity"/>-->
     </application>
 
 </manifest>

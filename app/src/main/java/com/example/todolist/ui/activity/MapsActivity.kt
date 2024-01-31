@@ -1,15 +1,15 @@
-package com.example.todolist
+package com.example.todolist.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import com.example.todolist.R
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap

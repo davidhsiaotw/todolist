@@ -1,9 +1,10 @@
-package com.example.todolist
+package com.example.todolist.util
 
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolist.R
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 class TaskTouchSimpleCallBack(
