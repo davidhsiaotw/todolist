@@ -8,11 +8,12 @@ import android.widget.TextView
 import android.widget.Toast
 import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Build
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.todolist.R
+import com.example.todolist.databinding.FragmentEditTaskBinding
 import com.example.todolist.model.Task
-import com.example.todolist.databinding.FragmentSecondBinding
 import com.example.todolist.viewmodels.TodoListViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -30,27 +31,45 @@ import java.util.*
  */
 class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
     private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
-    private lateinit var task: Task
+    private var task: Task? = null
     private lateinit var createDateText: TextInputEditText
     private lateinit var dueDateText: TextInputEditText
     private lateinit var locationText: TextInputEditText
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    private var _binding: FragmentSecondBinding? = null
+    private var _binding: FragmentEditTaskBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
+    companion object {
+        fun newInstance(task: Task): TaskEditDialogFragment {
+            val fragment = TaskEditDialogFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("task", task)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            task = arguments?.getParcelable("task", Task::class.java)
+        } else {
+            arguments?.classLoader = Task::class.java.classLoader
+            @Suppress("DEPRECATION")
+            task = arguments?.getParcelable("task")
+        }
+        setStyle(STYLE_NORMAL, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSecondBinding.inflate(inflater, container, false)
+    ): View {
+        _binding = FragmentEditTaskBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,10 +77,12 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // set default create date for new task
         createDateText = view.findViewById(R.id.create_date_input)
         val today = Date()
         createDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(today))
-        createDateText.setOnFocusChangeListener { view, hasFocus ->
+        // show date picker when user click on create date input
+        createDateText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 val datePicker = MaterialDatePicker.Builder.datePicker()
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -74,13 +95,15 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
             }
         }
 
+        // set default due date for new task
         dueDateText = view.findViewById(R.id.due_date_input)
         val c = Calendar.getInstance()
         c.time = today
         c.add(Calendar.DATE, 1)
         val tomorrow = c.time
         dueDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(tomorrow))
-        dueDateText.setOnFocusChangeListener { view, hasFocus ->
+        // show date picker when user click on due date input
+        dueDateText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 val datePicker = MaterialDatePicker.Builder.datePicker()
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
@@ -93,61 +116,21 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
             }
         }
 
-        val selectedId = viewModel.selectedId.value
-        locationText = view.findViewById(R.id.location_input)
-        if (viewModel.selectedId.value != null)
-            viewModel.getTaskById(selectedId!!).observe(this.viewLifecycleOwner) {
-                task = it
-                binding.apply {
-                    titleInput.setText(task.title, TextView.BufferType.SPANNABLE)
-                    descriptionInput.setText(task.description, TextView.BufferType.SPANNABLE)
-                    createDateInput.setText(task.createDate, TextView.BufferType.SPANNABLE)
-                    dueDateInput.setText(task.dueDate, TextView.BufferType.SPANNABLE)
-                    if (task.location.isBlank()) {
-                        if (hasLocationPermission()) {
-                            fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
-                                val location = task.result
-                                if (location != null) {
-                                    val ll = "${location.latitude}, ${location.longitude}"
-                                    locationInput.setText(
-                                        ll, TextView.BufferType.SPANNABLE
-                                    )
-                                } else {
-                                    Toast.makeText(
-                                        requireContext(), "NULL location", Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }
+        // show old task data if user want to edit
+        task?.apply {
+            binding.let {
+                it.titleInput.setText(title, TextView.BufferType.SPANNABLE)
+                it.descriptionInput.setText(description, TextView.BufferType.SPANNABLE)
+                it.createDateInput.setText(createDate, TextView.BufferType.SPANNABLE)
+                it.dueDateInput.setText(dueDate, TextView.BufferType.SPANNABLE)
+                it.locationInput.setText(location, TextView.BufferType.SPANNABLE)
+            }
+        }
 
-                        locationInput.setText("")
-                    } else {
-                        locationInput.setText(task.location, TextView.BufferType.SPANNABLE)
-                    }
-                }
-            }
-        else {
-            // set default location for new task
-            if (hasLocationPermission()) {
-                fusedLocationProviderClient.lastLocation.addOnCompleteListener { task ->
-                    val location = task.result
-                    if (location != null) {
-                        val ll = "${location.latitude}, ${location.longitude}"
-                        locationText.setText(
-                            ll, TextView.BufferType.SPANNABLE
-                        )
-                    } else {
-                        Toast.makeText(
-                            requireContext(), "NULL location", Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }
-        locationText.setOnFocusChangeListener { view, hasFocus ->
-            if (hasFocus)
-                requestLocationPermission()
-        }
+//        locationText.setOnFocusChangeListener { view, hasFocus ->
+//            if (hasFocus)
+//                requestLocationPermission()
+//        }
 
         view.findViewById<MaterialButton>(R.id.save_button).setOnClickListener {
             if (binding.titleInput.text!!.isNotBlank()) {
@@ -163,38 +146,43 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.setSelectedId(null)
         _binding = null
     }
 
+    /**
+     * Save task to database
+     */
     private fun saveTask() {
-        if (viewModel.selectedId.value != null) {
+        // if task is not null, update task; otherwise, add new task
+        if (task != null) {
             binding.apply {
                 viewModel.updateTask(
-                    viewModel.selectedId.value!!, titleInput.text.toString(),
+                    task!!.id, titleInput.text.toString(),
                     descriptionInput.text.toString(), createDateInput.text.toString(),
                     dueDateInput.text.toString(), locationInput.text.toString()
                 )
             }
-
             Toast.makeText(
                 requireContext(),
-                "successfully update ${binding.titleInput.text}",
+                "successfully update ${task!!.title}",
                 Toast.LENGTH_SHORT
             ).show()
         } else {
             binding.apply {
                 viewModel.addNewTask(
-                    titleInput.text.toString(), descriptionInput.text.toString(),
-                    createDateInput.text.toString(), dueDateInput.text.toString(),
-                    locationInput.text.toString()
+                    Task(
+                        title = titleInput.text.toString(),
+                        description = descriptionInput.text.toString(),
+                        createDate = createDateInput.text.toString(),
+                        dueDate = dueDateInput.text.toString(),
+                        location = locationInput.text.toString()
+                    )
                 )
+                Toast.makeText(
+                    requireContext(), "successfully add new task: ${titleInput.text}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-
-            Toast.makeText(
-                requireContext(), "successfully add new task: ${binding.titleInput.text}",
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
@@ -228,6 +216,4 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
             0, Manifest.permission.ACCESS_FINE_LOCATION
         )
     }
-
-
 }

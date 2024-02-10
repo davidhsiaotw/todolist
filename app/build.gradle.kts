@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.devtools.ksp") version "1.8.0-1.0.8"
+    id("kotlin-parcelize")
 }
 
 @Suppress("UnstableApiUsage")

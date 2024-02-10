@@ -4,56 +4,17 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.model.Task
-import com.example.todolist.databinding.TaskViewBinding
+import com.example.todolist.ui.viewholder.TaskViewHolder
 
 class TaskListAdapter(
-    private val onItemClicked: (Task) -> Unit, private val checkedListener: TaskCompleteListener,
+    private val onItemClicked: (Task) -> Unit, private val onItemChecked: (task: Task) -> Unit,
     private val onItemSwiped: (Task) -> Unit
-) : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(DiffCallback) {
-
-    class TaskViewHolder(private var binding: TaskViewBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(checkedListener: TaskCompleteListener, task: Task) {
-            binding.apply {
-                setTask(task)
-
-                if (task.title.length > 20) {
-                    val subtitle = "${task.title.substring(0, 21)} ..."
-                    title.text = subtitle
-                } else
-                    title.text = task.title
-
-                val descriptionLine = task.description.split('\n')
-                val firstLine = descriptionLine[0]
-                if (firstLine.length > 20) {
-                    val subDescription = "${firstLine.substring(0, 21)} ..."
-                    description.text = subDescription
-
-                } else if (descriptionLine.size > 1) {
-                    val subDescription = "$firstLine ..."
-                    description.text = subDescription
-
-                } else {
-                    description.text = firstLine
-                }
-
-                textView.text =
-                    root.context.getString(R.string.date).format(task.createDate, task.dueDate)
-                location.text = task.location
-                checkbox.isChecked = task.isCompleted
-                setCheckedListener(checkedListener)
-            }
-        }
-    }
-
+) : ListAdapter<Task, TaskViewHolder>(DiffCallback) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder {
         return TaskViewHolder(
-            TaskViewBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false
-            )
+            LayoutInflater.from(parent.context).inflate(R.layout.task_view, parent, false)
         )
     }
 
@@ -62,7 +23,7 @@ class TaskListAdapter(
         holder.itemView.setOnClickListener {
             onItemClicked(task)
         }
-        holder.bind(checkedListener, task)
+        holder.bind(onItemChecked, task)
     }
 
     fun deleteTask(position: Int) {
@@ -81,8 +42,4 @@ class TaskListAdapter(
             }
         }
     }
-}
-
-class TaskCompleteListener(val checkedListener: (task: Task) -> Unit) {
-    fun onCheck(task: Task) = checkedListener(task)
 }

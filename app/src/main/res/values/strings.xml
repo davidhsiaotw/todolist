@@ -3,8 +3,8 @@
     <string name="action_quote">Quote</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">@string/API_KEY</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="todolist_fragment_label">TodoList Fragment</string>
+    <string name="edit_task_fragment_label">Edit Task Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
