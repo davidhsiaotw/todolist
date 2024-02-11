@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
                     true
                 }
+
                 else -> false
             }
         }
@@ -89,18 +90,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     /**
-     * @see <a href="https://developer.android.com/develop/ui/views/components/dialogs#FullscreenDialog">reference</a>
+     * @see <a href="https://developer.android.com/develop/ui/views/components/dialogs#FullscreenDialog">
+     *     Show a dialog full screen</a>
      */
-    fun showDialog() {
-        val fragmentManager = supportFragmentManager
-        val newFragment = TaskEditDialogFragment()
-
-        val transaction = fragmentManager.beginTransaction()
+    private fun showDialog() {
+        val transaction = supportFragmentManager.beginTransaction()
+        // Remove any currently showing dialog
+        val previous = supportFragmentManager.findFragmentByTag("dialog")
+        if (previous != null) transaction.remove(previous)
         // For a little polish, specify a transition animation
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         // To make it fullscreen, use the 'content' root view as the container
         // for the fragment, which is always the root view for the activity
-        transaction.add(android.R.id.content, newFragment).addToBackStack(null).commit()
+        val newFragment = TaskEditDialogFragment()
+        transaction.addToBackStack(null).add(android.R.id.content, newFragment).commit()
     }
 
     // reference: https://www.youtube.com/watch?v=mwzKYIB9cQs&ab_channel=TechProjects
