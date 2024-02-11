@@ -10,10 +10,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    var title: String,
-    var description: String,
+    val title: String,
+    val description: String,
     @ColumnInfo(name = "create_date") val createDate: String,
-    @ColumnInfo(name = "due_date") var dueDate: String,
-    var location: String,
-    @ColumnInfo(name = "complete") var isCompleted: Boolean = false,
+    @ColumnInfo(name = "due_date") val dueDate: String,
+    val location: String,
+    @ColumnInfo(name = "complete") val isCompleted: Boolean = false,
 ) : Parcelable

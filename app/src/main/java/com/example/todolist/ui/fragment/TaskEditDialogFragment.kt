@@ -157,9 +157,13 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
         if (task != null) {
             binding.apply {
                 viewModel.updateTask(
-                    task!!.id, titleInput.text.toString(),
-                    descriptionInput.text.toString(), createDateInput.text.toString(),
-                    dueDateInput.text.toString(), locationInput.text.toString()
+                    task!!.copy(
+                        title = titleInput.text.toString(),
+                        description = descriptionInput.text.toString(),
+                        createDate = createDateInput.text.toString(),
+                        dueDate = dueDateInput.text.toString(),
+                        location = locationInput.text.toString()
+                    )
                 )
             }
             Toast.makeText(
