@@ -14,11 +14,11 @@ class TodoListViewModel(private val taskRepository: ITaskRepository<Task>) : Vie
     val allTasks: LiveData<List<Task>> = taskRepository.getAllTasks().asLiveData()
 
     fun addNewTask(task: Task) {
-        viewModelScope.launch { taskRepository.insert(task) }
+        viewModelScope.launch(context = Dispatchers.IO) { taskRepository.insert(task) }
     }
 
     fun updateTask(task: Task) {
-        viewModelScope.launch { taskRepository.update(task) }
+        viewModelScope.launch(context = Dispatchers.IO) { taskRepository.update(task) }
     }
 
     fun delete(task: Task) {

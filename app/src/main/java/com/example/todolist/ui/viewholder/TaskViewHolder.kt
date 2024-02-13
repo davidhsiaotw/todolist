@@ -40,8 +40,7 @@ class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         location.text = task.location
         checkBox.isChecked = task.isCompleted
         checkBox.setOnClickListener { cb ->
-            task.isCompleted = (cb as CheckBox).isChecked
-            onChecked(task)
+            onChecked(task.copy(isCompleted = (cb as CheckBox).isChecked))
         }
     }
 }
