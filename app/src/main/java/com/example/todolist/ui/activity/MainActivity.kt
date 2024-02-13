@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.todolist.R
 import com.example.todolist.ui.fragment.TaskEditDialogFragment
+import com.example.todolist.util.DrawableComparator.bytesEqualTo
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -49,10 +50,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 R.id.visibility -> {
                     // change icon and show/hide tasks
                     it.icon?.apply {
-                        when (this.constantState) {
+                        when (this.bytesEqualTo(
                             ResourcesCompat.getDrawable(
                                 resources, R.drawable.round_visibility_off_24, theme
-                            )!!.constantState -> {
+                            )
+                        )) {
+                            true -> {
                                 // TODO: show all tasks
 
                                 it.icon = ResourcesCompat.getDrawable(
@@ -60,7 +63,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                                 )
                             }
 
-                            else -> {
+                            false -> {
                                 // TODO: show only incomplete tasks
 
                                 it.icon = ResourcesCompat.getDrawable(
