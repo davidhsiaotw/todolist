@@ -1,19 +1,21 @@
 package com.example.todolist.ui.activity
 
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.get
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.todolist.R
-import com.example.todolist.network.QuoteApi
 import com.example.todolist.ui.fragment.TaskEditDialogFragment
 import com.google.android.material.bottomappbar.BottomAppBar
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     //    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -30,36 +32,43 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         float.setOnClickListener {
             showDialog()
         }
-        findViewById<BottomAppBar>(R.id.bottomAppBar).setOnMenuItemClickListener {
+
+        val bottomAppBar = findViewById<BottomAppBar>(R.id.bottomAppBar)
+        // set icon for visibility
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            savedInstanceState?.getParcelable("icon", Bitmap::class.java)
+        } else {
+            savedInstanceState?.classLoader = Bitmap::class.java.classLoader
+            @Suppress("DEPRECATION")
+            savedInstanceState?.getParcelable("icon")
+        }?.apply {
+            bottomAppBar.menu[0].icon = BitmapDrawable(resources, this)
+        }
+        bottomAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.action_quote -> {
-                    // TODO: show daily quote
-                    val call = QuoteApi.retrofitService.getQuote(50, 10)
-                    call.enqueue(object : Callback<List<Map<String, Any>>> {
-                        override fun onResponse(
-                            call: Call<List<Map<String, Any>>>,
-                            response: Response<List<Map<String, Any>>>
-                        ) {
-                            val body = response.body()?.get(0)?.get("content")
-                            if (body != null) {
-                                MaterialAlertDialogBuilder(this@MainActivity)
-                                    .setTitle("Daily Quote")
-                                    .setMessage(body as String)
-                                    .setPositiveButton("REGENERATE") { dialog, _ ->
-                                        // TODO: call api again -> close current dialog -> open
-                                        //  new dialog
-                                        dialog.dismiss()
-                                    }.show()
+                R.id.visibility -> {
+                    // change icon and show/hide tasks
+                    it.icon?.apply {
+                        when (this.constantState) {
+                            ResourcesCompat.getDrawable(
+                                resources, R.drawable.round_visibility_off_24, theme
+                            )!!.constantState -> {
+                                // TODO: show all tasks
+
+                                it.icon = ResourcesCompat.getDrawable(
+                                    resources, R.drawable.round_visibility_24, theme
+                                )
+                            }
+
+                            else -> {
+                                // TODO: show only incomplete tasks
+
+                                it.icon = ResourcesCompat.getDrawable(
+                                    resources, R.drawable.round_visibility_off_24, theme
+                                )
                             }
                         }
-
-                        override fun onFailure(call: Call<List<Map<String, Any>>>, t: Throwable) {
-                            MaterialAlertDialogBuilder(this@MainActivity)
-                                .setMessage(t.stackTraceToString()).show()
-                        }
-
-                    })
-
+                    }
                     true
                 }
 
@@ -67,6 +76,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             }
         }
 //        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d(null, "onSaveInstanceState")
+        findViewById<BottomAppBar>(R.id.bottomAppBar).menu[0].icon?.apply {
+            outState.putParcelable("icon", this.toBitmap())
+        }
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu): Boolean {

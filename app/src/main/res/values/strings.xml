@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Todo List</string>
-    <string name="action_quote">Quote</string>
+    <string name="menu_item_visibility">Invisible</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">@string/API_KEY</string>
     <!-- Strings used for fragments for navigation -->
     <string name="todolist_fragment_label">TodoList Fragment</string>
