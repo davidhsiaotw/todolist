@@ -20,7 +20,7 @@
             android:name=".ui.activity.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:exported="true"
-            android:theme="@style/Theme.TodoList.NoActionBar">
+            android:theme="@style/Theme.TodoList">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
