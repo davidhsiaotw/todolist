@@ -4,20 +4,20 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import java.io.ByteArrayOutputStream
-import java.util.Arrays
 
 /**
  * Compare two drawables by their bytes or pixels.
  *
- * <a href="https://gist.github.com/XinyueZ/3cca89416a1e443f914ed37f80ed59f2">Code Source</a>
+ * @see <a href="https://gist.github.com/XinyueZ/3cca89416a1e443f914ed37f80ed59f2">Code Source</a>
  */
 object DrawableComparator {
     fun <T : Drawable> T.bytesEqualTo(t: T?) = toBitmap().bytesEqualTo(t?.toBitmap(), true)
 
     fun <T : Drawable> T.pixelsEqualTo(t: T?) = toBitmap().pixelsEqualTo(t?.toBitmap(), true)
 
-    private fun Bitmap.bytesEqualTo(otherBitmap: Bitmap?, shouldRecycle: Boolean = false) =
+    fun Bitmap.bytesEqualTo(otherBitmap: Bitmap?, shouldRecycle: Boolean = false) =
         otherBitmap?.let { other ->
             if (width == other.width && height == other.height) {
                 val res = toBytes().contentEquals(other.toBytes())
@@ -28,10 +28,10 @@ object DrawableComparator {
             } else false
         } ?: kotlin.run { false }
 
-    private fun Bitmap.pixelsEqualTo(otherBitmap: Bitmap?, shouldRecycle: Boolean = false) =
+    fun Bitmap.pixelsEqualTo(otherBitmap: Bitmap?, shouldRecycle: Boolean = false) =
         otherBitmap?.let { other ->
             if (width == other.width && height == other.height) {
-                val res = Arrays.equals(toPixels(), other.toPixels())
+                val res = toPixels().contentEquals(other.toPixels())
                 if (shouldRecycle) {
                     doRecycle().also { otherBitmap.doRecycle() }
                 }
@@ -43,7 +43,7 @@ object DrawableComparator {
         if (!isRecycled) recycle()
     }
 
-    private fun <T : Drawable> T.toBitmap(): Bitmap {
+    fun <T : Drawable> T.toBitmap(): Bitmap {
         if (this is BitmapDrawable) return bitmap
 
         val drawable: Drawable = this

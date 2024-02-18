@@ -1,13 +1,9 @@
 package com.example.todolist.ui.activity
 
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.get
 import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
@@ -36,14 +32,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         val bottomAppBar = findViewById<BottomAppBar>(R.id.bottomAppBar)
         // set icon for visibility
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            savedInstanceState?.getParcelable("icon", Bitmap::class.java)
-        } else {
-            savedInstanceState?.classLoader = Bitmap::class.java.classLoader
-            @Suppress("DEPRECATION")
-            savedInstanceState?.getParcelable("icon")
-        }?.apply {
-            bottomAppBar.menu[0].icon = BitmapDrawable(resources, this)
+        savedInstanceState?.getBoolean("isVisible")?.apply {
+            bottomAppBar.menu[0].icon = if (this) {
+                ResourcesCompat.getDrawable(
+                    resources, R.drawable.round_visibility_24, theme
+                )
+            } else {
+                ResourcesCompat.getDrawable(
+                    resources, R.drawable.round_visibility_off_24, theme
+                )
+            }
         }
         bottomAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -52,22 +50,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                     it.icon?.apply {
                         when (this.bytesEqualTo(
                             ResourcesCompat.getDrawable(
-                                resources, R.drawable.round_visibility_off_24, theme
+                                resources, R.drawable.round_visibility_24, theme
                             )
                         )) {
                             true -> {
-                                // TODO: show all tasks
-
+                                // TODO: show only incomplete tasks
                                 it.icon = ResourcesCompat.getDrawable(
-                                    resources, R.drawable.round_visibility_24, theme
+                                    resources, R.drawable.round_visibility_off_24, theme
                                 )
                             }
 
                             false -> {
-                                // TODO: show only incomplete tasks
-
+                                // TODO: show all tasks
                                 it.icon = ResourcesCompat.getDrawable(
-                                    resources, R.drawable.round_visibility_off_24, theme
+                                    resources, R.drawable.round_visibility_24, theme
                                 )
                             }
                         }
@@ -83,9 +79,21 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        Log.d(null, "onSaveInstanceState")
+//        Log.d(null, "onSaveInstanceState")
         findViewById<BottomAppBar>(R.id.bottomAppBar).menu[0].icon?.apply {
-            outState.putParcelable("icon", this.toBitmap())
+            when (this.bytesEqualTo(
+                ResourcesCompat.getDrawable(
+                    resources, R.drawable.round_visibility_24, theme
+                )
+            )) {
+                true -> {
+                    outState.putBoolean("isVisible", true)
+                }
+
+                false -> {
+                    outState.putBoolean("isVisible", false)
+                }
+            }
         }
     }
 
