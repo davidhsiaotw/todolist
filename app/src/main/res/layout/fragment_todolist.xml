@@ -13,6 +13,7 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         android:paddingBottom="84dp"
+        tools:listitem="@layout/task_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

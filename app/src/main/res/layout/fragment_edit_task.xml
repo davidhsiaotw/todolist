@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/taskEditFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/taskEditFragment"
     tools:context=".ui.fragment.TaskEditDialogFragment">
 
     <ScrollView
@@ -27,8 +27,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                app:endIconMode="clear_text"
                 android:hint="@string/task_title_req"
+                app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -37,7 +37,7 @@
                     android:id="@+id/title_input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textAutoComplete|textCapWords"
+                    android:inputType="textAutoComplete"
                     android:maxLines="1"
                     android:text="@string/task_title"
                     android:textSize="18sp"
@@ -61,7 +61,7 @@
                     android:id="@+id/description_input"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:inputType="textAutoComplete|textCapWords|textMultiLine"
+                    android:inputType="textAutoComplete|textMultiLine"
                     android:maxLength="150"
                     android:maxLines="3"
                     android:text="@string/task_description"

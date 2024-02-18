@@ -9,6 +9,7 @@ import android.widget.Toast
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
 import com.example.todolist.R
@@ -27,7 +28,7 @@ import java.util.*
 
 /**
  * A simple [DialogFragment] subclass as a task edit UI.
- * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San"></a>
+ * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San">Easy Permissions</a>
  */
 class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
     private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
@@ -61,7 +62,6 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
             @Suppress("DEPRECATION")
             task = arguments?.getParcelable("task")
         }
-        setStyle(STYLE_NORMAL, android.R.style.Theme_Translucent_NoTitleBar_Fullscreen)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
     }
@@ -76,6 +76,9 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // do not set background color in xml, because it makes animation not completed
+        view.setBackgroundColor(resources.getColor(R.color.md_theme_surface, null))
+        view.background.alpha = 204
 
         // set default create date for new task
         createDateText = view.findViewById(R.id.create_date_input)
