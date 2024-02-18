@@ -20,12 +20,12 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/add_content_description"
         app:layout_anchor="@id/bottomAppBar"
-        app:srcCompat="@drawable/round_add_24"
-        tools:ignore="ImageContrastCheck" />
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+        app:srcCompat="@drawable/round_add_24" />
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
-        style="@style/Widget.MaterialComponents.BottomAppBar.Colored"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

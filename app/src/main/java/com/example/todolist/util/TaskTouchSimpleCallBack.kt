@@ -29,7 +29,7 @@ class TaskTouchSimpleCallBack(
         RecyclerViewSwipeDecorator.Builder(
             c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive
         ).addSwipeLeftBackgroundColor(
-            ContextCompat.getColor(viewHolder.itemView.context, R.color.item_delete)
+            ContextCompat.getColor(viewHolder.itemView.context, R.color.md_theme_error)
         ).addSwipeLeftActionIcon(R.drawable.round_delete_forever_24).create().decorate()
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }
