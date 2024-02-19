@@ -11,10 +11,13 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.savedstate.SavedStateRegistryOwner
 import com.example.todolist.R
+import com.example.todolist.TodoListApplication
 import com.example.todolist.databinding.FragmentEditTaskBinding
 import com.example.todolist.model.Task
-import com.example.todolist.viewmodels.TodoListViewModel
+import com.example.todolist.viewmodels.TaskViewModel
+import com.example.todolist.viewmodels.TaskViewModelFactory
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.button.MaterialButton
@@ -30,7 +33,12 @@ import java.util.*
  * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San">Easy Permissions</a>
  */
 class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
-    private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
+    private val viewModel: TaskViewModel by activityViewModels {
+        TaskViewModelFactory(
+            activity?.application as TodoListApplication,
+            owner = activity as SavedStateRegistryOwner
+        )
+    }
     private var task: Task? = null
     private lateinit var createDateText: TextInputEditText
     private lateinit var dueDateText: TextInputEditText
