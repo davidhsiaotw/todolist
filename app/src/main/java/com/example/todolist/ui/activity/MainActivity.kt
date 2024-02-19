@@ -2,6 +2,7 @@ package com.example.todolist.ui.activity
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.get
@@ -9,18 +10,25 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.todolist.R
-import com.example.todolist.ui.fragment.TaskEditDialogFragment
+import com.example.todolist.TodoListApplication
+import com.example.todolist.ui.fragment.TaskEditFragment
 import com.example.todolist.util.DrawableComparator.bytesEqualTo
+import com.example.todolist.viewmodels.TaskViewModel
+import com.example.todolist.viewmodels.TaskViewModelFactory
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     //    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val viewModel: TaskViewModel by viewModels {
+        TaskViewModelFactory(
+            this.application as TodoListApplication, this
+        )
+    }
     private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(null, "onCreate!!!!!!!!!!!!!")
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -44,6 +52,21 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 )
             }
         }
+        // save visibility state
+        bottomAppBar.menu[0].icon?.apply {
+            when (this.bytesEqualTo(
+                ResourcesCompat.getDrawable(resources, R.drawable.round_visibility_24, theme)
+            )) {
+                true -> {
+                    viewModel.saveVisibility(true)
+                }
+
+                false -> {
+                    viewModel.saveVisibility(false)
+                }
+            }
+        }
+        // set click listener for each menu item
         bottomAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.visibility -> {
@@ -55,14 +78,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                             )
                         )) {
                             true -> {
-                                // TODO: show only incomplete tasks
+                                // show only incomplete tasks
+                                viewModel.saveVisibility(false)
                                 it.icon = ResourcesCompat.getDrawable(
                                     resources, R.drawable.round_visibility_off_24, theme
                                 )
                             }
 
                             false -> {
-                                // TODO: show all tasks
+                                // show all tasks
+                                viewModel.saveVisibility(true)
                                 it.icon = ResourcesCompat.getDrawable(
                                     resources, R.drawable.round_visibility_24, theme
                                 )
@@ -98,29 +123,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        menuInflater.inflate(R.menu.menu_main, menu)
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        return when (item.itemId) {
-//            R.id.action_settings -> true
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     /**
      * @see <a href="https://developer.android.com/develop/ui/views/components/dialogs#FullscreenDialog">
-     *     Show a dialog full screen</a>
+     *     Show a dialog full screen/Show a fragment above other fragments</a>
      */
     private fun showDialog() {
         val transaction = supportFragmentManager.beginTransaction()
@@ -131,7 +140,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
         // To make it fullscreen, use the 'content' root view as the container
         // for the fragment, which is always the root view for the activity
-        val newFragment = TaskEditDialogFragment()
+        val newFragment = TaskEditFragment()
         transaction.addToBackStack(null).add(android.R.id.content, newFragment).commit()
     }
 

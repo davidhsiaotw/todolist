@@ -12,6 +12,10 @@ class TaskViewModel(
 ) : ViewModel() {
     val allTasks: LiveData<List<Task>> = taskRepository.getAllTasks().asLiveData()
 
+    val isVisible: LiveData<Boolean> = handle.getLiveData("isVisible")
+//    private val _isVisible = MutableLiveData(true)
+//    val isVisible: LiveData<Boolean> = _isVisible
+
     fun addNewTask(task: Task) {
         viewModelScope.launch(context = Dispatchers.IO) { taskRepository.insert(task) }
     }
