@@ -9,8 +9,7 @@ import android.widget.Toast
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
-import android.util.Log
-import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.todolist.R
 import com.example.todolist.databinding.FragmentEditTaskBinding
@@ -27,10 +26,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * A simple [DialogFragment] subclass as a task edit UI.
+ * A [Fragment] for task editing.
  * @see <a href="https://www.youtube.com/watch?v=51fX94dU7Og&ab_channel=Stevdza-San">Easy Permissions</a>
  */
-class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallbacks {
+class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private val viewModel: TodoListViewModel by activityViewModels { TodoListViewModel.Factory }
     private var task: Task? = null
     private lateinit var createDateText: TextInputEditText
@@ -44,8 +43,8 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
     private val binding get() = _binding!!
 
     companion object {
-        fun newInstance(task: Task): TaskEditDialogFragment {
-            val fragment = TaskEditDialogFragment()
+        fun newInstance(task: Task): TaskEditFragment {
+            val fragment = TaskEditFragment()
             val bundle = Bundle()
             bundle.putParcelable("task", task)
             fragment.arguments = bundle
@@ -138,13 +137,13 @@ class TaskEditDialogFragment : DialogFragment(), EasyPermissions.PermissionCallb
         view.findViewById<MaterialButton>(R.id.save_button).setOnClickListener {
             if (binding.titleInput.text!!.isNotBlank()) {
                 saveTask()
-                dismiss()
+                activity?.onBackPressedDispatcher?.onBackPressed()
             } else {
                 Toast.makeText(requireContext(), "Title MUST not be blank", Toast.LENGTH_SHORT)
                     .show()
             }
         }
-        view.findViewById<MaterialButton>(R.id.cancel_button).setOnClickListener { dismiss() }
+        view.findViewById<MaterialButton>(R.id.cancel_button).setOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
     }
 
     override fun onDestroyView() {
