@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("JNI", stringFromJNI())
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -228,4 +229,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 //        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
 //        startActivity(intent)
 //    }
+
+    companion object {
+        init {
+            System.loadLibrary("todolist")
+        }
+
+        private external fun stringFromJNI(): String
+    }
 }

@@ -22,6 +22,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        externalNativeBuild {
+            cmake {
+                cppFlags += ""
+            }
+        }
     }
 
     buildTypes {
@@ -52,6 +57,12 @@ android {
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+            version = "3.22.1"
+        }
     }
 }
 
