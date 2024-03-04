@@ -5,6 +5,7 @@
     android:id="@+id/taskEditFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/md_theme_surface"
     tools:context=".ui.fragment.TaskEditFragment">
 
     <ScrollView
@@ -71,11 +72,51 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/starts_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Starts"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/starts_date_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/starts_date_button" />
+
+            <Button
+                android:id="@+id/starts_date_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textSize="18sp"
+                android:minWidth="0dp"
+                android:paddingHorizontal="12dp"
+                android:layout_marginTop="6dp"
+                app:layout_constraintStart_toEndOf="@id/starts_textView"
+                app:layout_constraintTop_toBottomOf="@id/description_input_label"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                tools:text="2024/02/29" />
+
+            <Button
+                android:id="@+id/starts_time_button"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="0dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:paddingHorizontal="12dp"
+                android:textSize="18sp"
+                app:layout_constraintStart_toEndOf="@id/starts_date_button"
+                app:layout_constraintTop_toBottomOf="@id/description_input_label"
+                app:shapeAppearance="?attr/shapeAppearanceCornerSmall"
+                tools:text="13:00" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/create_date_input_label"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="48dp"
                 android:hint="@string/create_date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

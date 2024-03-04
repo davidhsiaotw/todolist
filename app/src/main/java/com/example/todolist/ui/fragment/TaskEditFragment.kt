@@ -9,6 +9,8 @@ import android.widget.Toast
 import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
+import android.text.format.DateFormat.is24HourFormat
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.savedstate.SavedStateRegistryOwner
@@ -23,6 +25,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import java.text.SimpleDateFormat
@@ -51,6 +55,13 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     private val binding get() = _binding!!
 
     companion object {
+        private const val TAG = "TaskEditFragment"
+
+        /**
+         * Create a new instance of [TaskEditFragment].
+         * @param task the task to be edited
+         * @return a new instance of [TaskEditFragment]
+         */
         fun newInstance(task: Task): TaskEditFragment {
             val fragment = TaskEditFragment()
             val bundle = Bundle()
@@ -83,14 +94,96 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // do not set background color in xml, because it makes animation not completed
-        view.setBackgroundColor(resources.getColor(R.color.md_theme_surface, null))
-        view.background.alpha = 204
+        view.background.alpha = 231
+
+        // show old task data if user want to edit
+        task?.apply {
+            binding.let {
+                it.titleInput.setText(title, TextView.BufferType.SPANNABLE)
+                it.descriptionInput.setText(description, TextView.BufferType.SPANNABLE)
+                // TODO: set start date and due date
+                it.startsDateButton.text = startDate
+                it.createDateInput.setText(startDate, TextView.BufferType.SPANNABLE)
+                it.dueDateInput.setText(dueDate, TextView.BufferType.SPANNABLE)
+                // TODO: set start time and due time (12-hour format/24-hour format)
+                it.locationInput.setText(location, TextView.BufferType.SPANNABLE)
+            }
+        }
+
+        // variables for date and time
+        val today = Date()
+        val dateFormat = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+        val isSystem24Hour = is24HourFormat(this.requireContext())
+        val clockFormat = if (isSystem24Hour) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+
+        // set default start date for new task
+        var startDateText: String? = task?.startDate
+        val startsDateButton = view.findViewById<Button>(R.id.starts_date_button)
+        if (task == null) {
+            startDateText = dateFormat.format(today)
+            startsDateButton.text = startDateText
+        }
+        // show date picker when user click on start date button
+        startsDateButton.setOnClickListener {
+            val date: Long? = dateFormat.parse(startDateText!!)?.time
+
+            val datePicker = MaterialDatePicker.Builder.datePicker()
+                .setSelection(date ?: MaterialDatePicker.todayInUtcMilliseconds())
+                .setTitleText("Select a Start Date").build()
+
+            datePicker.addOnPositiveButtonClickListener {
+                startsDateButton.text = dateFormat.format(Date(it))
+            }
+            datePicker.show(parentFragmentManager, "datePicker")
+        }
+
+        // set default start time for new task
+//        val startsTimeButton = view.findViewById<Button>(R.id.starts_time_button)
+//        val startTimeText: String?
+//        if (task == null) {
+//            startTimeText = if (isSystem24Hour)
+//                SimpleDateFormat("HH:mm", Locale.getDefault()).format(today) else
+//                SimpleDateFormat("hh:mm", Locale.getDefault()).format(today)
+//            startsTimeButton.text = startTimeText
+//        }
+        // show time picker when user click on start time button
+//        startsTimeButton.setOnClickListener {
+//            val timePicker = MaterialTimePicker.Builder().setTimeFormat(clockFormat)
+//                .setHour(startTimeText.substring(0, 1).toInt())
+//                .setMinute(startTimeText.substring(3, 4).toInt())
+//                .setTitleText("Select a Start Time").build()
+//
+//            timePicker.addOnPositiveButtonClickListener {
+//                var hour = timePicker.hour
+//                val minute = timePicker.minute
+//                var midday: String? = null
+//
+//                // convert 24-hour format to 12-hour format if system is 12-hour format
+//                if (!isSystem24Hour) {
+//                    midday = if (hour < 12) "AM" else "PM"
+//                    if (hour > 12) hour -= 12
+//                }
+//                // add 0 to hour and minute if they are units digit
+//                val hourStr = if (timePicker.hour < 10) "0$hour" else hour.toString()
+//                val minuteStr = if (minute < 10) "0${minute}" else minute.toString()
+//
+//                midday.let {
+//                    startTimeText = if (it != null) {
+//                        "$hourStr:$minuteStr $midday"
+//                    } else {
+//                        "$hourStr:$minuteStr"
+//                    }
+//                }
+//            }
+//            timePicker.show(parentFragmentManager, "timePicker")
+//        }
 
         // set default create date for new task
         createDateText = view.findViewById(R.id.create_date_input)
-        val today = Date()
-        createDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(today))
+        if (task == null)
+            createDateText.setText(
+                SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(today)
+            )
         // show date picker when user click on create date input
         createDateText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -111,7 +204,7 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         c.time = today
         c.add(Calendar.DATE, 1)
         val tomorrow = c.time
-        dueDateText.setText(SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(tomorrow))
+        dueDateText.setText(dateFormat.format(tomorrow))
         // show date picker when user click on due date input
         dueDateText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -119,21 +212,10 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .setTitleText("Select Due Date").build()
                 datePicker.addOnPositiveButtonClickListener {
-                    val date = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault()).format(Date(it))
+                    val date = dateFormat.format(Date(it))
                     dueDateText.setText(date)
                 }
                 datePicker.show(parentFragmentManager, "DueDatePicker")
-            }
-        }
-
-        // show old task data if user want to edit
-        task?.apply {
-            binding.let {
-                it.titleInput.setText(title, TextView.BufferType.SPANNABLE)
-                it.descriptionInput.setText(description, TextView.BufferType.SPANNABLE)
-                it.createDateInput.setText(createDate, TextView.BufferType.SPANNABLE)
-                it.dueDateInput.setText(dueDate, TextView.BufferType.SPANNABLE)
-                it.locationInput.setText(location, TextView.BufferType.SPANNABLE)
             }
         }
 
@@ -151,7 +233,8 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     .show()
             }
         }
-        view.findViewById<MaterialButton>(R.id.cancel_button).setOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
+        view.findViewById<MaterialButton>(R.id.cancel_button)
+            .setOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
     }
 
     override fun onDestroyView() {
@@ -170,7 +253,7 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     task!!.copy(
                         title = titleInput.text.toString(),
                         description = descriptionInput.text.toString(),
-                        createDate = createDateInput.text.toString(),
+                        startDate = createDateInput.text.toString(),
                         dueDate = dueDateInput.text.toString(),
                         location = locationInput.text.toString()
                     )
@@ -187,7 +270,7 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
                     Task(
                         title = titleInput.text.toString(),
                         description = descriptionInput.text.toString(),
-                        createDate = createDateInput.text.toString(),
+                        startDate = createDateInput.text.toString(),
                         dueDate = dueDateInput.text.toString(),
                         location = locationInput.text.toString()
                     )
