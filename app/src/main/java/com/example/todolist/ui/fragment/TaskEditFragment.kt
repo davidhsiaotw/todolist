@@ -121,9 +121,9 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
             val date: Long = dateFormat.parse(startDateText)!!.time
             val oneDayInMillis: Long = 24 * 60 * 60 * 1000L // 24 hours in milliseconds
 
+            // add one day to the selected date because MaterialDatePicker will minus one day from the selected date
             val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setSelection(date ?: MaterialDatePicker.todayInUtcMilliseconds())
-                .setTitleText("Select a Start Date").build()
+                .setSelection(date + oneDayInMillis).setTitleText("Select a Start Date").build()
 
             datePicker.addOnPositiveButtonClickListener {
                 startsDateButton.text = dateFormat.format(Date(it))
@@ -186,10 +186,10 @@ class TaskEditFragment : Fragment(), EasyPermissions.PermissionCallbacks {
         // show date picker when user click on end date button
         endsDateButton.setOnClickListener {
             val date: Long = dateFormat.parse(endDateText)!!.time
-
+            val oneDayInMillis: Long = 24 * 60 * 60 * 1000L // 24 hours in milliseconds
 
             val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setSelection(date ).setTitleText("Select a Due Date").build()
+                .setSelection(date + oneDayInMillis).setTitleText("Select a Due Date").build()
 
             datePicker.addOnPositiveButtonClickListener {
                 endsDateButton.text = dateFormat.format(Date(it))
