@@ -36,7 +36,7 @@ class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             description.text = firstLine
         }
 
-        date.text = inputView.context.getString(R.string.date, task.createDate, task.dueDate)
+        date.text = inputView.context.getString(R.string.date, task.startDate, task.dueDate)
         location.text = task.location
         checkBox.isChecked = task.isCompleted
         checkBox.setOnClickListener { cb ->
