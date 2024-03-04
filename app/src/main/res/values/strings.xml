@@ -16,9 +16,11 @@
     characters)</string>
     <string name="add_content_description">Add</string>
     <string name="date">%s~%s</string>
+    <string name="time12H">%s:%s %s</string>
+    <string name="time24H">%s:%s %s</string>
     <string name="date_example">1900/01/01</string>
-    <string name="create_date">Create Date</string>
-    <string name="due_date">Due Date</string>
+    <string name="starts">Starts</string>
+    <string name="ends">Ends</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="location">Location</string>
